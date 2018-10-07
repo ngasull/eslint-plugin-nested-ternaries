@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-strict-ternaries",
+  "name": "eslint-plugin-nested-ternaries",
   "version": "0.0.0",
   "description": "Mutliline ternaries are great, even nested",
   "keywords": [
