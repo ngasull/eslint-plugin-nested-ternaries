@@ -21,6 +21,13 @@ ruleTester.run("indent-ternaries", rule, {
   valid: [{
     code: "const foo = a ? b : c",
   }, {
+    code: "const foo = (a) ? b : c",
+    options: [{ testParens: "ignore" }],
+  }, {
+    code: "const foo = a ? (b) : c",
+  }, {
+    code: "const foo = a ? b : (c)",
+  }, {
     code: "\n\
 const foo =\n\
   a ?\n\
@@ -54,9 +61,72 @@ const foo =\n\
   :\n\
     e\n\
 ",
+  }, {
+    code: "\n\
+const foo =\n\
+  a ?\n\
+    b\n\
+  : c ?\n\
+    {\n\
+      d: 'd',\n\
+    }\n\
+  :\n\
+    e\n\
+",
+  }, {
+    code: "\n\
+const foo = {\n\
+  bar:\n\
+    a ?\n\
+      b\n\
+    :\n\
+      c\n\
+  }\n\
+",
   }],
 
   invalid: [{
+    code: "const foo = (a) ? b : c",
+    errors: [{
+      message: "There shouldn't be parens around test",
+    }],
+    output: "const foo = a ? b : c"
+  }, {
+    code: "\n\
+  const foo = a ?\n\
+      b\n\
+    :\n\
+      c\n\
+",
+    errors: [{
+      message: "Multiline ternaries must start on a new line",
+    }],
+    output: "\n\
+  const foo = \n\
+    a ?\n\
+      b\n\
+    :\n\
+      c\n\
+",
+  }, {
+    code: "\n\
+  const foo =\n\
+  a ?\n\
+    b\n\
+  :\n\
+    c\n\
+",
+    errors: [{
+      message: "Multiline ternaries must be indented",
+    }],
+    output: "\n\
+  const foo =\n\
+    a ?\n\
+      b\n\
+    :\n\
+      c\n\
+",
+  }, {
     code: "\n\
 const foo =\n\
   a\n\
@@ -183,6 +253,54 @@ const foo =\n\
     b\n\
   :\n\
     c\n\
+",
+  }, {
+    code: "\n\
+const foo =\n\
+  a ?\n\
+    b\n\
+  :\n\
+  {\n\
+    d: 'd',\n\
+  }\n\
+",
+    errors: [{
+      message: "Ternary expression's alternate must be indented on a new line",
+    }],
+    output: "\n\
+const foo =\n\
+  a ?\n\
+    b\n\
+  :\n\
+    {\n\
+    d: 'd',\n\
+  }\n\
+",
+  }, {
+    code: "\n\
+const foo =\n\
+  a ?\n\
+    b\n\
+  : c ?\n\
+  {\n\
+    d: 'd',\n\
+  }\n\
+  :\n\
+    e\n\
+",
+    errors: [{
+      message: "Ternary expression's consequent must be indented on a new line",
+    }],
+    output: "\n\
+const foo =\n\
+  a ?\n\
+    b\n\
+  : c ?\n\
+    {\n\
+    d: 'd',\n\
+  }\n\
+  :\n\
+    e\n\
 ",
   }, {
     code: "\n\
