@@ -86,11 +86,11 @@ const foo = {\n\
   }],
 
   invalid: [{
-    code: "const foo = (a) ? b : c",
+    code: "const foo = (a.yolo  &&12) ? b : c",
     errors: [{
       message: "There shouldn't be parens around test",
     }],
-    output: "const foo = a ? b : c"
+    output: "const foo = a.yolo  &&12 ? b : c"
   }, {
     code: "\n\
   const foo = a ?\n\
@@ -111,20 +111,25 @@ const foo = {\n\
   }, {
     code: "\n\
   const foo =\n\
-  a ?\n\
+  // This is pre-comment\n\
+  a /* Important inline */ && b ? // This is post-comment\n\
     b\n\
   :\n\
-    c\n\
+    // Important alternate\n\
+    c /* That trail */\n\
 ",
     errors: [{
       message: "Multiline ternaries must be indented",
     }],
     output: "\n\
   const foo =\n\
-    a ?\n\
+  // This is pre-comment\n\
+    a /* Important inline */ && b ?\n\
+      // This is post-comment\n\
       b\n\
     :\n\
-      c\n\
+      // Important alternate\n\
+      c /* That trail */\n\
 ",
   }, {
     code: "\n\
